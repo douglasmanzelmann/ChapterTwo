@@ -1,27 +1,28 @@
 /**
  * Created by dmanzelmann on 10/27/14.
  */
-public class UOAUtilities {
+public class UOA<T> {
     private int next;
     private int size;
-    private Node[] data;
+    private T[] data;
 
-    public UOAUtilities() {
+    public UOA() {
         next = 0;
         size = 100;
-        data = new Node[size];
+        data = (T[])new Object[size];
     }
 
-    public UOAUtilities(int s) {
+    public UOA(int s) {
         next = 0;
-        data = new Node[s];
+        data = (T[])new Object[s];
         size = s;
     }
 
-    public boolean insert(Node newNode) {
+    public boolean insert(T newListing) {
+        KeyMode node = (KeyMode) newListing;
         if(next >= size)
             return false;
-        data[next] = newNode.deepCopy();
+        data[next] = (T)node.deepCopy();
 
         if(data[next] == null)
             return false;
@@ -30,20 +31,21 @@ public class UOAUtilities {
         return true;
     }
 
-    public Node fetch(String targetKey) {
-        Node node;
-        Node temp;
+    public KeyMode fetch(Object targetKey) {
+        KeyMode node = (KeyMode) data[0];
 
         //sequential search
+        T temp;
         int i = 0;
-        while (i < next && !(data[i].compareTo(targetKey) == 0)) {
+        while (i < next && !(node.compareTo(targetKey) != 0)) {
             i++;
+            node = (KeyMode) data[i];
         }
 
         if (i == next)
             return null;
 
-        node = data[i].deepCopy();
+        node = node.deepCopy();
 
         //move the node up one position, part of the optimization
         if(i != 0) {
@@ -55,10 +57,12 @@ public class UOAUtilities {
         return node;
     }
 
-    public boolean delete(String targetKey) {
+    public boolean delete(Object targetKey) {
+        KeyMode node = (KeyMode) data[0];
         int i = 0;
-        while (i < next && !(data[i].compareTo(targetKey) == 0)) {
+        while (i < next && !(node.compareTo(targetKey) == 0)) {
             i++;
+            node = (KeyMode) data[i];
         }
 
         if (i == next)
@@ -71,7 +75,7 @@ public class UOAUtilities {
         return true;
     }
 
-    public boolean update(String targetKey, Node newNode) {
+    public boolean update(Object targetKey, T newNode) {
         if(delete(targetKey) == false)
             return false;
         else if(insert(newNode) == false)
@@ -85,3 +89,4 @@ public class UOAUtilities {
             System.out.println(data[i].toString());
     }
 }
+
